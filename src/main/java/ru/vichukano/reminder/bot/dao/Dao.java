@@ -4,10 +4,10 @@ import java.util.Optional;
 
 public interface Dao<T> {
 
-    Optional<T> find(String id);
+    Optional<T> find(String id) throws Exception;
 
-    void add(T t);
+    void add(T t) throws Exception;
 
-    void remove(T t);
+    void remove(T t) throws Exception;
 
 }
