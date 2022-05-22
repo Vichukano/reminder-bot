@@ -29,4 +29,11 @@ public abstract class AbstractUpdateHandler implements Handler<Update, SendMessa
             .orElseThrow(() -> new IllegalStateException("Can't find user id for update: " + update));
     }
 
+    protected String text(Update update) {
+        return Optional.ofNullable(update)
+            .map(Update::getMessage)
+            .map(Message::getText)
+            .orElseThrow(() -> new IllegalStateException("Can't find text for update: " + update));
+    }
+
 }
