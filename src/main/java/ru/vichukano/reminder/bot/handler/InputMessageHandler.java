@@ -1,9 +1,8 @@
 package ru.vichukano.reminder.bot.handler;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.vichukano.reminder.bot.dao.BotUser;
 import ru.vichukano.reminder.bot.dao.Dao;
@@ -11,22 +10,14 @@ import ru.vichukano.reminder.bot.domain.UserState;
 import ru.vichukano.reminder.bot.telegram.Factory;
 
 @Slf4j
-@Component
-public class InputMessageHandler extends AbstractUpdateHandler {
+@RequiredArgsConstructor
+class InputMessageHandler implements Handler<MessageContext, SendMessage> {
     private final Dao<BotUser> userDao;
     private final Factory<InlineKeyboardMarkup> factory;
 
-    public InputMessageHandler(Dao<BotUser> userDao, Factory<InlineKeyboardMarkup> factory) {
-        this.userDao = userDao;
-        this.factory = factory;
-    }
-
     @Override
-    public SendMessage handle(Update update) {
-        log.debug("Start to handle update: {}", update);
-        final String chatId = chatId(update);
-        final String text = text(update);
-        final String userId = userId(update);
+    public SendMessage handle(MessageContext context) {
+        final String userId = context.getUserId();
         final BotUser current = userDao.find(userId)
             .orElseThrow(() -> new IllegalStateException("Can't find user with id: " + userId));
         final BotUser updated = BotUser.builder()
@@ -34,17 +25,15 @@ public class InputMessageHandler extends AbstractUpdateHandler {
             .state(UserState.INPUT_DATE)
             .context(
                 BotUser.RemindContext.builder()
-                    .text(text)
+                    .text(context.getMessage())
                     .build()
             )
             .build();
         userDao.add(updated);
-        final SendMessage out = SendMessage.builder()
-            .chatId(chatId)
+        return SendMessage.builder()
+            .chatId(context.getChatId())
             .text("Message received. Now choose remind date from current values:\n")
             .replyMarkup(factory.construct(Factory.Item.DATE))
             .build();
-        log.debug("Out message: {}", out);
-        return out;
     }
 }

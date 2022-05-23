@@ -5,7 +5,9 @@ import lombok.Getter;
 @Getter
 public enum BotCommand {
     HELP("/help"),
-    REMIND("/remind");
+    REMIND("/remind"),
+    CONFIRM("/confirm"),
+    CANCEL("/cancel");
     private final String val;
 
     BotCommand(String val) {

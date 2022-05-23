@@ -5,5 +5,5 @@ public enum UserState {
     INPUT_MESSAGE,
     INPUT_DATE,
     INPUT_TIME,
-    FINISH
+    CONFIRM
 }
