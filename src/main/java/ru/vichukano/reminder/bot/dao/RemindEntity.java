@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Value
 @Builder
-public class MessageToRemind {
+public class RemindEntity {
     String reminderId;
     String messageText;
     LocalDateTime remindDateTime;

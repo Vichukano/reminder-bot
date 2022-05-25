@@ -6,7 +6,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.vichukano.reminder.bot.dao.BotUser;
 import ru.vichukano.reminder.bot.dao.Dao;
-import ru.vichukano.reminder.bot.dao.MessageToRemind;
+import ru.vichukano.reminder.bot.dao.RemindEntity;
 import ru.vichukano.reminder.bot.telegram.Factory;
 
 @Configuration
@@ -41,7 +41,7 @@ public class HandlerConfiguration {
 
     @Bean(name = "confirm")
     Handler<MessageContext, SendMessage> confirmMessageHandler(Dao<BotUser> userDao,
-                                                               Dao<MessageToRemind> remindDao) {
+                                                               Dao<RemindEntity> remindDao) {
         return new LoggableHandler(new ConfirmMessageHandler(userDao, remindDao));
     }
 

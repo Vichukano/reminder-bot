@@ -5,18 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.vichukano.reminder.bot.dao.BotUser;
 import ru.vichukano.reminder.bot.dao.Dao;
-import ru.vichukano.reminder.bot.dao.MessageToRemind;
+import ru.vichukano.reminder.bot.dao.RemindEntity;
 
 @Slf4j
 @RequiredArgsConstructor
 class ConfirmMessageHandler implements Handler<MessageContext, SendMessage> {
     private final Dao<BotUser> userDao;
-    private final Dao<MessageToRemind> remindDao;
+    private final Dao<RemindEntity> remindDao;
 
     @Override
     public SendMessage handle(MessageContext context) {
         final BotUser current = userDao.find(context.getUserId()).orElseThrow();
-        final var remindMessage = MessageToRemind.builder()
+        final var remindMessage = RemindEntity.builder()
             .reminderId(current.getId())
             .messageText(current.getContext().getText())
             .remindDateTime(current.getContext().getTime().atDate(current.getContext().getDate()))
