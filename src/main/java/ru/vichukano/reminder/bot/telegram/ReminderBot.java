@@ -1,6 +1,7 @@
 package ru.vichukano.reminder.bot.telegram;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -15,7 +16,9 @@ public class ReminderBot extends TelegramLongPollingBot {
     private final String botToken;
     private final Handler<Update, SendMessage> handler;
 
-    public ReminderBot(String botName, String botToken, Handler<Update, SendMessage> handler) {
+    public ReminderBot(@Value("${app.bot.name}") String botName,
+                       @Value("${app.bot.token}") String botToken,
+                       Handler<Update, SendMessage> handler) {
         this.botName = botName;
         this.botToken = botToken;
         this.handler = handler;
