@@ -2,6 +2,7 @@ package ru.vichukano.reminder.bot.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.vichukano.reminder.bot.domain.BotUser;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;

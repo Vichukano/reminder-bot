@@ -1,8 +1,7 @@
-package ru.vichukano.reminder.bot.dao;
+package ru.vichukano.reminder.bot.domain;
 
 import lombok.Builder;
 import lombok.Value;
-import ru.vichukano.reminder.bot.domain.UserState;
 import java.time.LocalDate;
 import java.time.LocalTime;
 

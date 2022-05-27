@@ -3,9 +3,9 @@ package ru.vichukano.reminder.bot.handler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import ru.vichukano.reminder.bot.dao.BotUser;
 import ru.vichukano.reminder.bot.dao.Dao;
 import ru.vichukano.reminder.bot.dao.RemindEntity;
+import ru.vichukano.reminder.bot.domain.BotUser;
 
 @Slf4j
 @RequiredArgsConstructor

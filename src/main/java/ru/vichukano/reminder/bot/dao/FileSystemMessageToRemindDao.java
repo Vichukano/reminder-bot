@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -67,7 +68,8 @@ public class FileSystemMessageToRemindDao implements Dao<RemindEntity> {
         log.trace("Start to find all");
         try {
             return Files.list(path)
-                .map(p -> find(p.getFileName().toString()))
+                .filter(Objects::nonNull)
+                .map(p -> find(p.getFileName().toString().replace(SFX, "")))
                 .filter(Optional::isPresent)
                 .map(Optional::get);
         } catch (IOException e) {

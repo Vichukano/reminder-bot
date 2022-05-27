@@ -4,9 +4,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import ru.vichukano.reminder.bot.dao.BotUser;
 import ru.vichukano.reminder.bot.dao.Dao;
 import ru.vichukano.reminder.bot.dao.RemindEntity;
+import ru.vichukano.reminder.bot.domain.BotUser;
 import ru.vichukano.reminder.bot.telegram.Factory;
 
 @Configuration

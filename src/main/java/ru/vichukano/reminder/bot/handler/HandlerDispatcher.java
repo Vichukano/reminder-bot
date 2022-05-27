@@ -7,9 +7,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
-import ru.vichukano.reminder.bot.dao.BotUser;
 import ru.vichukano.reminder.bot.dao.Dao;
 import ru.vichukano.reminder.bot.domain.BotCommand;
+import ru.vichukano.reminder.bot.domain.BotUser;
 import ru.vichukano.reminder.bot.domain.UserState;
 import java.util.Optional;
 
