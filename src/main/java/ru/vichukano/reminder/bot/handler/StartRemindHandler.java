@@ -10,6 +10,7 @@ import ru.vichukano.reminder.bot.domain.UserState;
 @Slf4j
 @RequiredArgsConstructor
 class StartRemindHandler implements Handler<MessageContext, SendMessage> {
+    static final String MESSAGE = "Please, input message what you want to remind and send it to me";
     private final Dao<BotUser> userDao;
 
     @Override
@@ -21,7 +22,7 @@ class StartRemindHandler implements Handler<MessageContext, SendMessage> {
         userDao.add(botUser);
         return SendMessage.builder()
             .chatId(context.getChatId())
-            .text("Please, input message what you want to remind and send it to me")
+            .text(MESSAGE)
             .build();
     }
 }

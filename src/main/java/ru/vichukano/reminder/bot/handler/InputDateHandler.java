@@ -13,27 +13,33 @@ import java.time.LocalDate;
 @Slf4j
 @RequiredArgsConstructor
 class InputDateHandler implements Handler<MessageContext, SendMessage> {
+    static final String MESSAGE = "Date [%s] accepted. Now choose remind time from current values:\n";
     private final Dao<BotUser> userDao;
     private final Factory<InlineKeyboardMarkup> factory;
 
     @Override
     public SendMessage handle(MessageContext context) {
-        final BotUser current = userDao.find(context.getUserId()).orElseThrow();
-        final BotUser updated = BotUser.builder()
-            .id(current.getId())
-            .state(UserState.INPUT_TIME)
-            .context(
-                BotUser.RemindContext.builder()
-                    .text(current.getContext().getText())
-                    .date(LocalDate.parse(context.getMessage()))
-                    .build()
-            )
-            .build();
-        userDao.add(updated);
-        return SendMessage.builder()
-            .chatId(context.getChatId())
-            .text("Date received. Now choose remind time from current values:\n")
-            .replyMarkup(factory.construct(Factory.Item.TIME))
-            .build();
+        try {
+            final BotUser current = userDao.find(context.getUserId()).orElseThrow();
+            final var date = LocalDate.parse(context.getMessage());
+            final BotUser updated = BotUser.builder()
+                .id(current.getId())
+                .state(UserState.INPUT_TIME)
+                .context(
+                    BotUser.RemindContext.builder()
+                        .text(current.getContext().getText())
+                        .date(date)
+                        .build()
+                )
+                .build();
+            userDao.add(updated);
+            return SendMessage.builder()
+                .chatId(context.getChatId())
+                .text(String.format(MESSAGE, date))
+                .replyMarkup(factory.construct(Factory.Item.TIME))
+                .build();
+        } catch (Exception e) {
+            throw new HandlerException("Can't process context: " + context, e);
+        }
     }
 }

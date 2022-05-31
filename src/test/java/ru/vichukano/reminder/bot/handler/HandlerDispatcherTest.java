@@ -69,6 +69,23 @@ class HandlerDispatcherTest {
             );
     }
 
+    @Test
+    void shouldDispatchToUnknown() {
+        Mockito.when(botUserDao.find(ArgumentMatchers.anyString()))
+            .thenReturn(Optional.empty());
+        Update update = update("Unknown command");
+
+        final SendMessage result = testTarget.handle(update);
+
+        Assertions.assertThat(result.getText())
+            .isEqualTo(
+                "Can not handle message: "
+                    + "Unknown command"
+                    + " please type "
+                    + BotCommand.HELP.getVal()
+            );
+    }
+
     private Update update(String text) {
         Update u = new Update();
         Message m = new Message();
