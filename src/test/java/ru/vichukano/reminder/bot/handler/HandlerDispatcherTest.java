@@ -20,13 +20,6 @@ import ru.vichukano.reminder.bot.telegram.KeyboardFactory;
 import java.util.Optional;
 
 @SpringBootTest(classes = {
-    HelpHandler.class,
-    InputDateHandler.class,
-    InputTimeHandler.class,
-    InputMessageHandler.class,
-    StartRemindHandler.class,
-    ConfirmMessageHandler.class,
-    UnknownMessageHandler.class,
     HandlerConfiguration.class,
     KeyboardFactory.class,
     HandlerDispatcher.class
@@ -38,6 +31,10 @@ class HandlerDispatcherTest {
     private Dao<RemindEntity> remindEntityDao;
     @MockBean
     private Dao<BotUser> botUserDao;
+    @MockBean(name = "help")
+    private LoggableHandler helpHandler;
+    @MockBean(name = "unknown")
+    private LoggableHandler unknownMessageHandler;
 
     @Test
     void smoke() {
@@ -59,14 +56,7 @@ class HandlerDispatcherTest {
 
         final SendMessage result = testTarget.handle(update);
 
-        Assertions.assertThat(result.getText())
-            .isEqualTo(
-                "Hello! I am reminder bot and I help you to remind something important for you\n"
-                    + "Type remind command: "
-                    + BotCommand.REMIND.getVal()
-                    + " and input your remind message, choose remind date and time.\n"
-                    + " Message to remind will send to your notification source."
-            );
+        Mockito.verify(helpHandler, Mockito.times(1)).handle(ArgumentMatchers.any());
     }
 
     @Test
@@ -77,13 +67,7 @@ class HandlerDispatcherTest {
 
         final SendMessage result = testTarget.handle(update);
 
-        Assertions.assertThat(result.getText())
-            .isEqualTo(
-                "Can not handle message: "
-                    + "Unknown command"
-                    + " please type "
-                    + BotCommand.HELP.getVal()
-            );
+        Mockito.verify(unknownMessageHandler, Mockito.times(1)).handle(ArgumentMatchers.any());
     }
 
     private Update update(String text) {
