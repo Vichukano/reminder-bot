@@ -23,6 +23,7 @@ public class HandlerDispatcher implements Handler<Update, SendMessage> {
     private final Handler<MessageContext, SendMessage> inputTimeHandler;
     private final Handler<MessageContext, SendMessage> confirmMessageHandler;
     private final Handler<MessageContext, SendMessage> unknownMessageHandler;
+    private final Handler<MessageContext, SendMessage> cancelMessageHandler;
     private final Dao<BotUser> userDao;
 
     public HandlerDispatcher(@Qualifier("help") Handler<MessageContext, SendMessage> helpHandler,
@@ -32,6 +33,7 @@ public class HandlerDispatcher implements Handler<Update, SendMessage> {
                              @Qualifier("time") Handler<MessageContext, SendMessage> inputTimeHandler,
                              @Qualifier("confirm") Handler<MessageContext, SendMessage> confirmMessageHandler,
                              @Qualifier("unknown") Handler<MessageContext, SendMessage> unknownMessageHandler,
+                             @Qualifier("cancel") Handler<MessageContext, SendMessage> cancelMessageHandler,
                              Dao<BotUser> userDao) {
         this.helpHandler = helpHandler;
         this.startRemindHandler = startRemindHandler;
@@ -40,6 +42,7 @@ public class HandlerDispatcher implements Handler<Update, SendMessage> {
         this.inputTimeHandler = inputTimeHandler;
         this.confirmMessageHandler = confirmMessageHandler;
         this.unknownMessageHandler = unknownMessageHandler;
+        this.cancelMessageHandler = cancelMessageHandler;
         this.userDao = userDao;
     }
 
@@ -61,6 +64,8 @@ public class HandlerDispatcher implements Handler<Update, SendMessage> {
         final SendMessage out;
         if (BotCommand.HELP.getVal().equals(text)) {
             out = helpHandler.handle(context);
+        } else if (BotCommand.CANCEL.getVal().equals(text)) {
+            out = cancelMessageHandler.handle(context);
         } else if (UserState.START.equals(state) && BotCommand.REMIND.getVal().equals(text)) {
             out = startRemindHandler.handle(context);
         } else if (UserState.INPUT_MESSAGE.equals(state)) {
@@ -69,7 +74,7 @@ public class HandlerDispatcher implements Handler<Update, SendMessage> {
             out = inputDateHandler.handle(context);
         } else if (UserState.INPUT_TIME.equals(state)) {
             out = inputTimeHandler.handle(context);
-        } else if (UserState.CONFIRM.equals(state)) {
+        } else if (UserState.CONFIRM.equals(state) && BotCommand.CONFIRM.getVal().equals(text)) {
             out = confirmMessageHandler.handle(context);
         } else {
             out = unknownMessageHandler.handle(context);

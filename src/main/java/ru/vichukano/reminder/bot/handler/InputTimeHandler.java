@@ -1,7 +1,6 @@
 package ru.vichukano.reminder.bot.handler;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import ru.vichukano.reminder.bot.dao.Dao;
 import ru.vichukano.reminder.bot.domain.BotCommand;
@@ -9,7 +8,6 @@ import ru.vichukano.reminder.bot.domain.BotUser;
 import ru.vichukano.reminder.bot.domain.UserState;
 import java.time.LocalTime;
 
-@Slf4j
 @RequiredArgsConstructor
 class InputTimeHandler implements Handler<MessageContext, SendMessage> {
     static final String MESSAGE = "Time accepted. To confirm choose: %s, or choose: %s for cancel message.\n"

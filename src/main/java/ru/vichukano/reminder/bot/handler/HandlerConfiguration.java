@@ -50,4 +50,9 @@ public class HandlerConfiguration {
         return new LoggableHandler(new UnknownMessageHandler());
     }
 
+    @Bean(name = "cancel")
+    Handler<MessageContext, SendMessage> cancelMessageHandler(Dao<BotUser> userDao) {
+        return new LoggableHandler(new CancelMessageHandler(userDao));
+    }
+
 }

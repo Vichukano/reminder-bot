@@ -1,7 +1,6 @@
 package ru.vichukano.reminder.bot.handler;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.vichukano.reminder.bot.dao.Dao;
@@ -9,7 +8,6 @@ import ru.vichukano.reminder.bot.domain.BotUser;
 import ru.vichukano.reminder.bot.domain.UserState;
 import ru.vichukano.reminder.bot.telegram.Factory;
 
-@Slf4j
 @RequiredArgsConstructor
 class InputMessageHandler implements Handler<MessageContext, SendMessage> {
     static final String MESSAGE = "Message accepted. Now choose remind date from current values:\n";
