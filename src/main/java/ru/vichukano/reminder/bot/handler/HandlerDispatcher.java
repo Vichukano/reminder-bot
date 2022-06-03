@@ -64,7 +64,7 @@ public class HandlerDispatcher implements Handler<Update, SendMessage> {
         final SendMessage out;
         if (BotCommand.HELP.getVal().equals(text)) {
             out = helpHandler.handle(context);
-        } else if (BotCommand.CANCEL.getVal().equals(text)) {
+        } else if (BotCommand.CANCEL.getVal().equals(text) && state != UserState.START) {
             out = cancelMessageHandler.handle(context);
         } else if (UserState.START.equals(state) && BotCommand.REMIND.getVal().equals(text)) {
             out = startRemindHandler.handle(context);
