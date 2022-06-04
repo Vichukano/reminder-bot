@@ -7,44 +7,58 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import ru.vichukano.reminder.bot.dao.Dao;
+import ru.vichukano.reminder.bot.dao.RemindEntity;
 import ru.vichukano.reminder.bot.domain.BotCommand;
 import ru.vichukano.reminder.bot.domain.BotUser;
 import ru.vichukano.reminder.bot.domain.UserState;
+import ru.vichukano.reminder.bot.telegram.KeyboardFactory;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
 
 @SpringBootTest(classes = {
-    HandlerConfiguration.class,
-    HandlerDispatcher.class
+    HandlerDispatcher.class,
+    ContextVisitor.class,
+    KeyboardFactory.class,
+    HelpHandler.class,
+    StartRemindHandler.class,
+    InputMessageHandler.class,
+    InputDateHandler.class,
+    InputTimeHandler.class,
+    ConfirmMessageHandler.class,
+    UnknownMessageHandler.class,
+    CancelMessageHandler.class
 })
 class HandlerDispatcherTest {
-    @MockBean(name = "help")
-    Handler<MessageContext, SendMessage> helpHandler;
-    @MockBean(name = "start")
-    Handler<MessageContext, SendMessage> startRemindHandler;
-    @MockBean(name = "message")
-    Handler<MessageContext, SendMessage> inputMessageHandler;
-    @MockBean(name = "date")
-    Handler<MessageContext, SendMessage> inputDateHandler;
-    @MockBean(name = "time")
-    Handler<MessageContext, SendMessage> inputTimeHandler;
-    @MockBean(name = "confirm")
-    Handler<MessageContext, SendMessage> confirmMessageHandler;
-    @MockBean(name = "unknown")
-    Handler<MessageContext, SendMessage> unknownMessageHandler;
-    @MockBean(name = "cancel")
-    Handler<MessageContext, SendMessage> cancelMessageHandler;
-    @Autowired
-    private HandlerDispatcher testTarget;
+    @SpyBean(name = "help")
+    Handler<Context, VisibleContext<SendMessage>> helpHandler;
+    @SpyBean(name = "start")
+    Handler<Context, VisibleContext<SendMessage>> startRemindHandler;
+    @SpyBean(name = "message")
+    Handler<Context, VisibleContext<SendMessage>> inputMessageHandler;
+    @SpyBean(name = "date")
+    Handler<Context, VisibleContext<SendMessage>> inputDateHandler;
+    @SpyBean(name = "time")
+    Handler<Context, VisibleContext<SendMessage>> inputTimeHandler;
+    @SpyBean(name = "confirm")
+    Handler<Context, VisibleContext<SendMessage>> confirmMessageHandler;
+    @SpyBean(name = "unknown")
+    Handler<Context, VisibleContext<SendMessage>> unknownMessageHandler;
+    @SpyBean(name = "cancel")
+    Handler<Context, VisibleContext<SendMessage>> cancelMessageHandler;
     @MockBean
     private Dao<BotUser> botUserDao;
+    @MockBean
+    private Dao<RemindEntity> remindEntityDao;
+    @Autowired
+    private HandlerDispatcher testTarget;
 
     @Test
     void smoke() {
@@ -54,8 +68,7 @@ class HandlerDispatcherTest {
     @Test
     void shouldThrowIfInvalidMessage() {
         Assertions.assertThatThrownBy(() -> testTarget.handle(new Update()))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Got invalid update");
+            .isInstanceOf(HandlerException.class);
     }
 
     @Test
@@ -115,6 +128,11 @@ class HandlerDispatcherTest {
         final var user = BotUser.builder()
             .id("1")
             .state(UserState.INPUT_DATE)
+            .context(
+                BotUser.RemindContext.builder()
+                    .text("some text")
+                    .build()
+            )
             .build();
         Mockito.when(botUserDao.find(ArgumentMatchers.anyString()))
             .thenReturn(Optional.of(user));
@@ -130,6 +148,12 @@ class HandlerDispatcherTest {
         final var user = BotUser.builder()
             .id("1")
             .state(UserState.INPUT_TIME)
+            .context(
+                BotUser.RemindContext.builder()
+                    .text("some text")
+                    .date(LocalDate.now())
+                    .build()
+            )
             .build();
         Mockito.when(botUserDao.find(ArgumentMatchers.anyString()))
             .thenReturn(Optional.of(user));
@@ -145,6 +169,13 @@ class HandlerDispatcherTest {
         final var user = BotUser.builder()
             .id("1")
             .state(UserState.CONFIRM)
+            .context(
+                BotUser.RemindContext.builder()
+                    .text("remind me")
+                    .date(LocalDate.now())
+                    .time(LocalTime.now())
+                    .build()
+            )
             .build();
         Mockito.when(botUserDao.find(ArgumentMatchers.anyString()))
             .thenReturn(Optional.of(user));

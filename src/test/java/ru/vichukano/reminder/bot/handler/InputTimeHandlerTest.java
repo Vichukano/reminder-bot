@@ -3,22 +3,15 @@ package ru.vichukano.reminder.bot.handler;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import ru.vichukano.reminder.bot.dao.InMemoryUserStateDao;
 import ru.vichukano.reminder.bot.domain.BotCommand;
 import ru.vichukano.reminder.bot.domain.BotUser;
 import ru.vichukano.reminder.bot.domain.UserState;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
 class InputTimeHandlerTest {
-    private final Map<String, BotUser> mockStore = new HashMap<>();
-    private final InputTimeHandler testTarget = new InputTimeHandler(
-        new InMemoryUserStateDao(
-            mockStore
-        )
-    );
+    private final InputTimeHandler testTarget = new InputTimeHandler();
 
     @Test
     void shouldUpdateUserAndReturnMessage() {
@@ -31,17 +24,16 @@ class InputTimeHandlerTest {
                     .build()
             )
             .build();
-        mockStore.put(user.getId(), user);
         final var time = LocalTime.now();
-        final var context = MessageContext.builder()
-            .chatId("111")
-            .userId(user.getId())
+        final var context = InMessageContext.builder()
+            .uid(UUID.randomUUID())
+            .user(user)
             .message(time.toString())
             .build();
 
-        final SendMessage result = testTarget.handle(context);
+        final VisibleContext<SendMessage> result = testTarget.handle(context);
 
-        Assertions.assertThat(result.getText())
+        Assertions.assertThat(result.getMessage())
             .isEqualTo(String.format(
                 InputTimeHandler.MESSAGE,
                 BotCommand.CONFIRM.getVal(),
@@ -50,15 +42,14 @@ class InputTimeHandlerTest {
                 user.getContext().getDate(),
                 time
             ));
-        Assertions.assertThat(mockStore.get(user.getId()).getState()).isEqualTo(UserState.CONFIRM);
-        Assertions.assertThat(mockStore.get(user.getId()).getContext().getTime()).isEqualTo(time);
+        Assertions.assertThat(result.getUser().getState()).isEqualTo(UserState.CONFIRM);
     }
 
     @Test
     void shouldThrowHandlerException() {
-        final var context = MessageContext.builder()
-            .chatId("111")
-            .userId("2")
+        final var context = InMessageContext.builder()
+            .uid(UUID.randomUUID())
+            .user(BotUser.builder().build())
             .message("not time")
             .build();
 
