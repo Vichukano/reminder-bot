@@ -1,42 +1,40 @@
 package ru.vichukano.reminder.bot.handler;
 
-import lombok.RequiredArgsConstructor;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import ru.vichukano.reminder.bot.dao.Dao;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.springframework.stereotype.Component;
 import ru.vichukano.reminder.bot.domain.BotUser;
 import ru.vichukano.reminder.bot.domain.UserState;
 import ru.vichukano.reminder.bot.telegram.Factory;
 
-@RequiredArgsConstructor
-class InputMessageHandler implements Handler<MessageContext, SendMessage> {
+@Slf4j
+@Component("message")
+class InputMessageHandler extends SkeletonHandler {
     static final String MESSAGE = "Message accepted. Now choose remind date from current values:\n";
-    private final Dao<BotUser> userDao;
-    private final Factory<InlineKeyboardMarkup> factory;
 
     @Override
-    public SendMessage handle(MessageContext context) {
-        try {
-            final String userId = context.getUserId();
-            final BotUser current = userDao.find(userId)
-                .orElseThrow(() -> new IllegalStateException("Can't find user with id: " + userId));
-            final BotUser updated = BotUser.builder()
-                .id(current.getId())
-                .state(UserState.INPUT_DATE)
-                .context(
-                    BotUser.RemindContext.builder()
-                        .text(context.getMessage())
-                        .build()
-                )
-                .build();
-            userDao.add(updated);
-            return SendMessage.builder()
-                .chatId(context.getChatId())
-                .text(MESSAGE)
-                .replyMarkup(factory.construct(Factory.Item.DATE))
-                .build();
-        } catch (Exception e) {
-            throw new HandlerException("Failed to precess context: " + context, e);
-        }
+    protected KeyboardAnswerContext handleContext(Context in) {
+        final BotUser user = in.getUser();
+        return KeyboardAnswerContext.builder()
+            .uid(in.getUid())
+            .message(MESSAGE)
+            .keyboardType(Factory.Item.DATE)
+            .user(
+                BotUser.builder()
+                    .id(user.getId())
+                    .state(UserState.INPUT_DATE)
+                    .context(
+                        BotUser.RemindContext.builder()
+                            .text(in.getMessage())
+                            .build()
+                    )
+                    .build()
+            )
+            .build();
+    }
+
+    @Override
+    protected Logger log() {
+        return log;
     }
 }
