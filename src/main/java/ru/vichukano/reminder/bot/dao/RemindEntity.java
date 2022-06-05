@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 @Jacksonized
 public class RemindEntity {
+    String uid;
     String reminderId;
     String messageText;
     LocalDateTime remindDateTime;

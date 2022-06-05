@@ -46,13 +46,18 @@ class InputTimeHandlerTest {
     }
 
     @Test
-    void shouldThrowHandlerException() {
+    void shouldNotChangeUserIfTimeParseException() {
         final var context = InMessageContext.builder()
             .uid(UUID.randomUUID())
-            .user(BotUser.builder().build())
-            .message("not time")
+            .user(BotUser.builder()
+                .state(UserState.INPUT_TIME)
+                .build())
+            .message("not time!!!")
             .build();
 
-        Assertions.assertThatThrownBy(() -> testTarget.handle(context)).isInstanceOf(HandlerException.class);
+        final VisibleContext<SendMessage> result = testTarget.handleContext(context);
+
+        Assertions.assertThat(result.getUser().getState()).isEqualTo(UserState.INPUT_TIME);
+        Assertions.assertThat(result.getMessage()).isEqualTo(InputTimeHandler.WRONG_TIME_MESSAGE);
     }
 }

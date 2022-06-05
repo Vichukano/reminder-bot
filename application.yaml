@@ -1,0 +1,15 @@
+spring.application.name: reminder-bot
+
+app:
+  bot:
+    name:
+    token:
+  remind:
+    initialDelay: 60000
+    fixedDelay: 60000
+  notification:
+    url: "http://localhost:8080"
+    path: /api/v1/notificate
+  dao:
+    remind:
+      path: store/
