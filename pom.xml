@@ -51,6 +51,9 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <environmentVariables>
+                        <SPRING_CONFIG_LOCATION>${project.basedir}/application.yaml</SPRING_CONFIG_LOCATION>
+                    </environmentVariables>
                 </configuration>
             </plugin>
         </plugins>
