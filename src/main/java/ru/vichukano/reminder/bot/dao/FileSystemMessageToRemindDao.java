@@ -42,7 +42,7 @@ public class FileSystemMessageToRemindDao implements Dao<RemindEntity> {
     public void add(RemindEntity remindEntity) {
         try {
             log.trace("Start to add message to remind: {}", remindEntity);
-            final Path path = this.path.resolve(Path.of(remindEntity.getReminderId() + SFX));
+            final Path path = this.path.resolve(Path.of(remindEntity.getUid() + SFX));
             final String content = mapper.writeValueAsString(remindEntity);
             Files.writeString(path, content);
             log.trace("Successfully add message to remind: {}", remindEntity);
@@ -55,7 +55,7 @@ public class FileSystemMessageToRemindDao implements Dao<RemindEntity> {
     public void remove(RemindEntity remindEntity) {
         log.trace("Start to remove message to remind: {}", remindEntity);
         try {
-            final Path path = this.path.resolve(Path.of(remindEntity.getReminderId() + SFX));
+            final Path path = this.path.resolve(Path.of(remindEntity.getUid() + SFX));
             final boolean result = Files.deleteIfExists(path);
             log.trace("Result of delete file in path: {} is {}", path, result);
         } catch (IOException e) {

@@ -27,49 +27,54 @@ class FileSystemMessageToRemindDaoTest {
 
     @Test
     void shouldSaveAndFind() {
-        final var id = UUID.randomUUID().toString();
+        final var uid = UUID.randomUUID().toString();
         final var entity = RemindEntity.builder()
-            .reminderId(id)
+            .uid(uid)
+            .reminderId(UUID.randomUUID().toString())
             .remindDateTime(LocalDateTime.now())
             .messageText("remind me something")
             .build();
 
         testTarget.add(entity);
 
-        final Optional<RemindEntity> resultOpt = testTarget.find(id);
+        final Optional<RemindEntity> resultOpt = testTarget.find(uid);
         Assertions.assertThat(resultOpt).isNotEmpty();
         Assertions.assertThat(resultOpt.get()).isEqualTo(entity);
     }
 
     @Test
     void shouldRemove() {
-        final var id = UUID.randomUUID().toString();
+        final var uid = UUID.randomUUID().toString();
         final var entity = RemindEntity.builder()
-            .reminderId(id)
+            .uid(uid)
+            .reminderId(UUID.randomUUID().toString())
             .remindDateTime(LocalDateTime.now())
             .messageText("remind me something")
             .build();
         testTarget.add(entity);
-        final Optional<RemindEntity> resultOpt = testTarget.find(id);
+        final Optional<RemindEntity> resultOpt = testTarget.find(uid);
         Assertions.assertThat(resultOpt).isNotEmpty();
         testTarget.remove(entity);
-        final Optional<RemindEntity> resultOptSecond = testTarget.find(id);
+        final Optional<RemindEntity> resultOptSecond = testTarget.find(uid);
         Assertions.assertThat(resultOptSecond).isEmpty();
     }
 
     @Test
     void shouldReturnStreamOfFiles() {
         final var one = RemindEntity.builder()
+            .uid(UUID.randomUUID().toString())
             .reminderId(UUID.randomUUID().toString())
             .remindDateTime(LocalDateTime.now())
             .messageText("remind me something")
             .build();
         final var two = RemindEntity.builder()
+            .uid(UUID.randomUUID().toString())
             .reminderId(UUID.randomUUID().toString())
             .remindDateTime(LocalDateTime.now())
             .messageText("remind me something")
             .build();
         final var three = RemindEntity.builder()
+            .uid(UUID.randomUUID().toString())
             .reminderId(UUID.randomUUID().toString())
             .remindDateTime(LocalDateTime.now())
             .messageText("remind me something")

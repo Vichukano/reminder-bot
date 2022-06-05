@@ -21,6 +21,7 @@ class ConfirmMessageHandler extends SkeletonHandler {
     protected VisibleContext<SendMessage> handleContext(Context in) {
         final BotUser user = in.getUser();
         final var remindMessage = RemindEntity.builder()
+            .uid(in.getUid().toString())
             .reminderId(user.getId())
             .messageText(user.getContext().getText())
             .remindDateTime(user.getContext().getTime().atDate(user.getContext().getDate()))

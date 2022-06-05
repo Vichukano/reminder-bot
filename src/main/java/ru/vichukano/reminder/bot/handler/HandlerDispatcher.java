@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -107,7 +108,9 @@ public class HandlerDispatcher implements Handler<Update, SendMessage> {
     }
 
     private boolean isUpdateValid(Update update) {
-        return update.hasMessage() && update.getMessage().hasText();
+        final boolean hasText = update.hasMessage() && update.getMessage().hasText();
+        final boolean hasCallbackData = update.hasCallbackQuery();
+        return hasText || hasCallbackData;
     }
 
     private String chatId(Update update) {
@@ -115,6 +118,13 @@ public class HandlerDispatcher implements Handler<Update, SendMessage> {
             .map(Update::getMessage)
             .map(Message::getChatId)
             .map(String::valueOf)
+            .or(
+                () -> Optional.ofNullable(update)
+                    .map(Update::getCallbackQuery)
+                    .map(CallbackQuery::getMessage)
+                    .map(Message::getChatId)
+                    .map(String::valueOf)
+            )
             .orElseThrow(() -> new IllegalStateException("Can't find chat id for update: " + update));
     }
 
@@ -124,6 +134,13 @@ public class HandlerDispatcher implements Handler<Update, SendMessage> {
             .map(Message::getFrom)
             .map(User::getId)
             .map(String::valueOf)
+            .or(
+                () -> Optional.ofNullable(update)
+                    .map(Update::getCallbackQuery)
+                    .map(CallbackQuery::getFrom)
+                    .map(User::getId)
+                    .map(String::valueOf)
+            )
             .orElseThrow(() -> new IllegalStateException("Can't find user id for update: " + update));
     }
 
@@ -131,6 +148,11 @@ public class HandlerDispatcher implements Handler<Update, SendMessage> {
         return Optional.ofNullable(update)
             .map(Update::getMessage)
             .map(Message::getText)
+            .or(
+                () -> Optional.ofNullable(update)
+                    .map(Update::getCallbackQuery)
+                    .map(CallbackQuery::getData)
+            )
             .orElseThrow(() -> new IllegalStateException("Can't find text for update: " + update));
     }
 }

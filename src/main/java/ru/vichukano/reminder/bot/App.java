@@ -19,7 +19,7 @@ public class App {
     }
 
     @Bean
-    public BotSession reminderBot(ReminderBot bot) throws TelegramApiException {
+    public BotSession reminder(ReminderBot bot) throws TelegramApiException {
         return new TelegramBotsApi(DefaultBotSession.class).registerBot(bot);
     }
 

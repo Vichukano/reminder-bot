@@ -33,4 +33,22 @@ class InputDateHandlerTest {
         Assertions.assertThat(result.getMessage()).isEqualTo(String.format(InputDateHandler.MESSAGE, date));
         Assertions.assertThat(result.getUser().getState()).isEqualTo(UserState.INPUT_TIME);
     }
+
+    @Test
+    void shouldNotChangeUserStateIfParseException() {
+        final var context = InMessageContext.builder()
+            .uid(UUID.randomUUID())
+            .user(
+                BotUser.builder()
+                    .state(UserState.INPUT_DATE)
+                    .build()
+            )
+            .message("Not Date!")
+            .build();
+
+        final VisibleContext<SendMessage> result = testTarget.handle(context);
+
+        Assertions.assertThat(result.getMessage()).isEqualTo(InputDateHandler.WRONG_DATE_MESSAGE);
+        Assertions.assertThat(result.getUser().getState()).isEqualTo(UserState.INPUT_DATE);
+    }
 }

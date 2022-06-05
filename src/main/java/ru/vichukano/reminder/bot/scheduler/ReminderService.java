@@ -39,12 +39,12 @@ public class ReminderService implements RepeatableTask {
     }
 
     private void searchExpiredRemindEntities() {
-        log.info("Start to search messages to remind");
+        log.debug("Start to search messages to remind");
         try (final Stream<RemindEntity> entities = dao.findAll()) {
             final List<RemindEntity> toRemind = entities.filter(entity -> entity.getRemindDateTime().isBefore(now()))
                 .collect(Collectors.toList());
             toRemind.forEach(entity -> {
-                log.info("Remind! : {}", entity.getMessageText());
+                log.trace("Remind! : {}", entity.getMessageText());
                 final var notification = NotificationInfo.Notification.builder()
                     .notifiedUserId(entity.getReminderId())
                     .notificationText(entity.getMessageText())
@@ -61,7 +61,7 @@ public class ReminderService implements RepeatableTask {
         } catch (Exception e) {
             log.error("Failed to search and remind");
         }
-        log.info("Finish processing messages to remind");
+        log.debug("Finish processing messages to remind");
     }
 
     LocalDateTime now() {
