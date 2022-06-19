@@ -10,7 +10,7 @@
     </parent>
     <groupId>ru.vichukano</groupId>
     <artifactId>reminder-bot</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>reminder-bot</name>
     <description>Reminder telegram bot project</description>
     <properties>
