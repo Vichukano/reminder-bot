@@ -9,19 +9,24 @@ import ru.vichukano.reminder.bot.domain.BotCommand;
 @Slf4j
 @Component("unknown")
 class UnknownMessageHandler extends SkeletonHandler {
-    static final String MESSAGE = "Can not handle message: %s, please type: %s";
+  static final String MESSAGE = "Can not handle message: %s, please type: %s"
+      + " for help command, or type: %s for start to remind";
 
-    @Override
-    protected VisibleContext<SendMessage> handleContext(Context in) {
-        return SimpleAnswerContext.builder()
-            .uid(in.getUid())
-            .user(in.getUser())
-            .message(String.format(MESSAGE, in.getMessage(), BotCommand.HELP.getVal()))
-            .build();
-    }
+  @Override
+  protected VisibleContext<SendMessage> handleContext(Context in) {
+    return SimpleAnswerContext.builder()
+        .uid(in.getUid())
+        .user(in.getUser())
+        .message(String.format(
+            MESSAGE,
+            in.getMessage(),
+            BotCommand.HELP.getVal(),
+            BotCommand.REMIND.getVal()))
+        .build();
+  }
 
-    @Override
-    protected Logger log() {
-        return log;
-    }
+  @Override
+  protected Logger log() {
+    return log;
+  }
 }

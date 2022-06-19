@@ -24,7 +24,12 @@ class UnknownMessageHandlerTest {
         final VisibleContext<SendMessage> result = testTarget.handle(context);
 
         Assertions.assertThat(result.getMessage())
-            .isEqualTo(String.format(UnknownMessageHandler.MESSAGE, context.getMessage(), BotCommand.HELP.getVal()));
+            .isEqualTo(String.format(
+                  UnknownMessageHandler.MESSAGE,
+                  context.getMessage(),
+                  BotCommand.HELP.getVal(),
+                  BotCommand.REMIND.getVal()
+                  ));
         Assertions.assertThat(result.getUser().getState())
             .isEqualTo(UserState.START);
     }
